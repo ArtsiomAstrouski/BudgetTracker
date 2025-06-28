@@ -9,10 +9,22 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
+  container: {
+    padding: 16,
+  },
+  editContainer: {
+    marginTop: 8,
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 8,
+  },
   budgetInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
+    marginHorizontal: 5,
     gap: 10,
   },
   budgetLabel: {
