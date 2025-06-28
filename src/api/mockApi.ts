@@ -1,4 +1,4 @@
-import { ITransaction } from '../assets/type';
+import { ITransaction } from '../assets/types';
 
 let nextId = 1;
 
