@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode, FC } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ITransaction } from '../assets/type';
+import { ITransaction } from '../assets/types';
 import { mockTransactionApi } from '../api/mockApi';
 
 interface BudgetContextType {
