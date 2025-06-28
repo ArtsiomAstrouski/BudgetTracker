@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode, FC } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ITransaction } from '../assets/type';
+import { mockTransactionApi } from '../api/mockApi';
 
 interface BudgetContextType {
   budget: number;
@@ -28,51 +29,32 @@ interface BudgetProviderProps {
   children: ReactNode;
 }
 
-const MOCK_TRANSACTIONS: ITransaction[] = [
-  {
-    id: '1',
-    title: 'Coffee',
-    amount: -50,
-    date: new Date('2023-10-01').getTime(),
-  },
-  {
-    id: '2',
-    title: 'Groceries',
-    amount: -200,
-    date: new Date('2023-10-02').getTime(),
-  },
-  {
-    id: '3',
-    title: 'Salary',
-    amount: 1000,
-    date: new Date('2023-10-03').getTime(),
-  },
-];
-
 export const BudgetProvider: FC<BudgetProviderProps> = ({ children }) => {
-  const [budget, setBudgetState] = useState<number>(0);
+  const [budget, setBudgetState] = useState(0);
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const savedBudget = await AsyncStorage.getItem('budget');
-        if (savedBudget) setBudgetState(Number(savedBudget));
-        await new Promise((r) => setTimeout(r, 1000));
-        setTransactions(MOCK_TRANSACTIONS);
-        setError(null);
-      } catch (e) {
-        setError('Failed to load data');
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+    loadInitialData();
   }, []);
+
+  const loadInitialData = async () => {
+    setLoading(true);
+    try {
+      const savedBudget = await AsyncStorage.getItem('budget');
+      if (savedBudget) setBudgetState(Number(savedBudget));
+
+      const loadedTransactions = await mockTransactionApi.fetchTransactions();
+      setTransactions(loadedTransactions);
+      setError(null);
+    } catch (e) {
+      setError('Failed to load data');
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const setBudget = (value: number) => {
     setBudgetState(value);
@@ -82,19 +64,24 @@ export const BudgetProvider: FC<BudgetProviderProps> = ({ children }) => {
   const addTransaction = (transaction: Omit<ITransaction, 'id'>) => {
     const newTransaction: ITransaction = {
       ...transaction,
-      id: Math.random().toString(36).substring(2, 9),
-      date: Date.now(),
+      id: Date.now().toString(),
+      date: transaction.date || Date.now(),
     };
     setTransactions((prev) => [newTransaction, ...prev]);
   };
 
-  const refreshTransactions = () => {
+  const refreshTransactions = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setTransactions(MOCK_TRANSACTIONS);
-      setLoading(false);
+    try {
+      const refreshedTransactions = await mockTransactionApi.fetchTransactions();
+      setTransactions(refreshedTransactions);
       setError(null);
-    }, 1000);
+    } catch (e) {
+      setError('Failed to refresh transactions');
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const spent = transactions

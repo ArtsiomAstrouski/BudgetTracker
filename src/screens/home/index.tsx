@@ -5,12 +5,10 @@ import TransactionList from './components/transaction-list';
 import BudgetHeader from './components/budget-header';
 import { styles } from './styles';
 
-const HomeScreen = () => (
+export const HomeScreen = () => (
   <SafeAreaView style={styles.container}>
     <BudgetHeader />
     <TransactionForm />
     <TransactionList />
   </SafeAreaView>
 );
-
-export default HomeScreen;
