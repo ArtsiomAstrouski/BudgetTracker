@@ -10,6 +10,9 @@ export const Colors = {
   lightGray: '#e9ecef',
   borderGray: '#ced4da',
   textDark: '#495057',
+  textGray: '#6c757d',
+  dangerLight: '#f8d7da',
+  successLight: '#d4edda',
 } as const;
 
 export type ColorKey = keyof typeof Colors;

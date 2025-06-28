@@ -1,18 +1,12 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, FC } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export interface Transaction {
-  id: string;
-  title: string;
-  amount: number;
-  date: string;
-}
+import { ITransaction } from '../assets/type';
 
 interface BudgetContextType {
   budget: number;
   setBudget: (value: number) => void;
-  transactions: Transaction[];
-  addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
+  transactions: ITransaction[];
+  addTransaction: (transaction: Omit<ITransaction, 'id'>) => void;
   spent: number;
   loading: boolean;
   error: string | null;
@@ -34,15 +28,30 @@ interface BudgetProviderProps {
   children: ReactNode;
 }
 
-const MOCK_TRANSACTIONS: Transaction[] = [
-  { id: '1', title: 'Coffee', amount: -50, date: '2023-10-01' },
-  { id: '2', title: 'Groceries', amount: -200, date: '2023-10-02' },
-  { id: '3', title: 'Salary', amount: 1000, date: '2023-10-03' },
+const MOCK_TRANSACTIONS: ITransaction[] = [
+  {
+    id: '1',
+    title: 'Coffee',
+    amount: -50,
+    date: new Date('2023-10-01').getTime(),
+  },
+  {
+    id: '2',
+    title: 'Groceries',
+    amount: -200,
+    date: new Date('2023-10-02').getTime(),
+  },
+  {
+    id: '3',
+    title: 'Salary',
+    amount: 1000,
+    date: new Date('2023-10-03').getTime(),
+  },
 ];
 
-export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
+export const BudgetProvider: FC<BudgetProviderProps> = ({ children }) => {
   const [budget, setBudgetState] = useState<number>(0);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,10 +79,11 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
     AsyncStorage.setItem('budget', value.toString());
   };
 
-  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    const newTransaction: Transaction = {
+  const addTransaction = (transaction: Omit<ITransaction, 'id'>) => {
+    const newTransaction: ITransaction = {
       ...transaction,
       id: Math.random().toString(36).substring(2, 9),
+      date: Date.now(),
     };
     setTransactions((prev) => [newTransaction, ...prev]);
   };
