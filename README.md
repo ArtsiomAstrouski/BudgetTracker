@@ -1,4 +1,4 @@
-# Budget Tracker App  
+# Budget Tracker App (TEST APP INTER)
 
 A simple mobile application for tracking income and expenses with monthly budget management.  
 
